@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 
 # path = "/dev/video0"
@@ -62,6 +64,6 @@ ap2 = "'"
 # stream = f'ffmpeg -format_code Hi60 -f decklink -i "DeckLink SDI 4K" -c:a copy -c:v copy output.avi'
 i = 0
 with open(f'{stream_name}.py', 'w') as f:
-    f.write("import os\nfrom os.path import exists\ni = 0\nwhile os.path.exists(f'"f'{stream_name}'"{i}.mp4'):\n    i += 1\nfilename = f'"f'{stream_name}'"{i}.mp4'\nstream = f'"f'{stream}'"|[f=flv]{filename}"f'{ap}'f'{ap2}'"\ninput('Press enter to start stream, Ctrl-c to quit')\nos.system(stream)")
+    f.write("import os\nfrom os.path import exists\ni = 0\nwhile os.path.exists(f'"f'/home/hpstream/Desktop/StreamArchive/{stream_name}'"{i}.mp4'):\n    i += 1\nfilename = f'"f'{stream_name}'"{i}.mp4'\nstream = f'"f'{stream}'"|[f=flv]/home/hpstream/Desktop/StreamArchive/{filename}"f'{ap}'f'{ap2}'"\ninput('Press enter to start stream, Ctrl-c to quit')\nos.system(stream)")
 
 print(f"\nStream File Created\nType: python3 {stream_name}.py to load stream")
