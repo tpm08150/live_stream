@@ -22,7 +22,9 @@ import time
 
 Window.size = (1280, 300)
 
-stream_name = "streamGUIfile"
+stream_name = "Untitled-Stream"
+encoder = "-y -format_code Hi59 -f decklink -i 'DeckLink SDI 4K'"
+record_path = "/home/hpstream/Desktop/StreamArchive/"
 x = 0
 p = 0
 v = 0
@@ -106,7 +108,7 @@ class MyLayout(GridLayout):
         time.sleep(.1)
         i = 0
 
-        while os.path.exists(f'/home/tyler/live_stream/{stream_name}{i}.mp4'):
+        while os.path.exists(f'{record_path}{stream_name}{i}.mp4'):
             i += 1
         ap = '"'
         ap2 = "'"
@@ -115,27 +117,27 @@ class MyLayout(GridLayout):
             pass
 
         if self.rtmp1.text != "" and self.rtmp2.text == "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
-                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
+                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
-                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
+                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
-                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
+                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text != "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
-                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{self.rtmp4.text}/{self.key4.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
+                     f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{self.rtmp4.text}/{self.key4.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
 
         #os.system(stream)
@@ -152,7 +154,7 @@ class MyLayout(GridLayout):
 
 
     def Preview(self, instance):
-        video = f"ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -f opengl 'Video in Preview'"
+        video = f"ffmpeg {encoder}-f opengl 'Video in Preview'"
         v = subprocess.Popen("exec " + video, stdout=subprocess.PIPE, shell=True)
 
 
