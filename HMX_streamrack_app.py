@@ -4,6 +4,7 @@ from __future__ import print_function
 import subprocess
 import os
 from kivy.app import App
+from kivy.uix.videoplayer import VideoPlayer
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.image import Image
@@ -22,7 +23,10 @@ import time
 Window.size = (1280, 300)
 
 stream_name = "streamGUIfile"
-
+x = 0
+p = 0
+v = 0
+y = 0
 class MyLayout(GridLayout):
     def __init__(self, **kwargs):
         global x
@@ -33,19 +37,26 @@ class MyLayout(GridLayout):
         self.z = 40
 
         self.startGrid = GridLayout()
-        self.startGrid.cols = 2
+        self.startGrid.cols = 4
         self.startGrid.padding = 4
         self.startGrid.spacing = 2
         self.startGrid.size_hint_y = .2
         self.add_widget(self.startGrid)
 
-        self.StartButton = Button(text='Start Stream', background_color='gray', size_hint_x=0.1, size_hint_y=0.1)
+        self.StartButton = Button(text='Start Stream', background_color='green', size_hint_x=0.33, size_hint_y=0.1)
         self.startGrid.add_widget(self.StartButton)
         self.StartButton.bind(on_press=self.Start)
 
-        self.StopButton = Button(text='Stop Stream', background_color='gray', background_normal= '', size_hint_x=0.1, size_hint_y=0.1)
+        self.streamName = TextInput(multiline=False, hint_text="Stream Name", size_hint_x=0.33, font_size=20)
+        self.startGrid.add_widget(self.streamName)
+
+        self.StopButton = Button(text='Stop Stream', background_color='gray', background_normal= '', size_hint_x=0.33, size_hint_y=0.1)
         self.startGrid.add_widget(self.StopButton)
         self.StopButton.bind(on_press=self.Stop)
+
+        self.PreviewButton = Button(text='Video in Preview', background_color='gray', background_normal= '', size_hint_x=0.33, size_hint_y=0.1)
+        self.startGrid.add_widget(self.PreviewButton)
+        self.PreviewButton.bind(on_press=self.Preview)
 
         self.rtmpGrid = GridLayout()
         self.rtmpGrid.cols = 2
@@ -78,50 +89,72 @@ class MyLayout(GridLayout):
         self.key4 = TextInput(multiline=False, hint_text="Stream Key 4", font_size=20)
         self.rtmpGrid.add_widget(self.key4)
 
-    def Start(self, instance):
-        global p
-        x = 0
-        x += 1
-        p = subprocess.Popen("exec ", stdout=subprocess.PIPE, shell=True)
 
-        p.kill()
+    def Start(self, instance):
+        global stream
+        global x
+        global p
+        global v
+        stream_name = self.streamName.text
+
+        self.StartButton.background_color='red'
+        self.StartButton.text = 'Stream Running'
+
+        if x > 0:
+            p.kill()
+        x += 1
+        time.sleep(.1)
         i = 0
+
         while os.path.exists(f'/home/tyler/live_stream/{stream_name}{i}.mp4'):
             i += 1
         ap = '"'
         ap2 = "'"
+        x = 0
+        if self.rtmp1.text == "" and self.rtmp2.text == "" and self.rtmp3.text == "" and self.rtmp4.text == "":
+            pass
+
         if self.rtmp1.text != "" and self.rtmp2.text == "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset veryfast -trellis 2 ' \
+            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
             print(stream)
-
+            x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset veryfast -trellis 2 ' \
+            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
             print(stream)
-
+            x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text == "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset veryfast -trellis 2 ' \
+            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
             print(stream)
-
+            x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text != "":
-            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset veryfast -trellis 2 ' \
+            stream = f'ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{self.rtmp4.text}/{self.key4.text}|[f=flv]/home/tyler/live_stream/{stream_name}{i}.mp4"'
             print(stream)
+
         #os.system(stream)
-        p = subprocess.Popen("exec " + stream, stdout=subprocess.PIPE, shell=True)
+        if x > 0:
+            p = subprocess.Popen("exec " + stream, stdout=subprocess.PIPE, shell=True)
 
         # with open(f'{stream_name}.py', 'w') as f:
         #     f.write("import os\nfrom os.path import exists\ni = 0\nwhile os.path.exists(f'"f'/home/tyler/live_stream/{stream_name}'"{i}.mp4'):\n    i += 1\nfilename = f'"f'{stream_name}'"{i}.mp4'\nstream = f'"f'{stream}'"|[f=flv]/home/hpstream/Desktop/StreamArchive/{filename}"f'{ap}'f'{ap2}'"\ninput('Press enter to start stream, Ctrl-c to quit')\nos.system(stream)")
 
     def Stop(self, instance):
-        global p
+        self.StartButton.text="Start Stream"
+        self.StartButton.background_color='gray'
         p.kill()
+
+
+    def Preview(self, instance):
+        video = f"ffmpeg -re -stream_loop -1 -i /home/tyler/TestVideo.mp4 -f opengl 'Video in Preview'"
+        v = subprocess.Popen("exec " + video, stdout=subprocess.PIPE, shell=True)
+
 
 class MyApp(App):
     def build(self):
@@ -132,3 +165,4 @@ class MyApp(App):
 if __name__ == "__main__":
     MyApp().run()
 p.kill()
+v.kill()
