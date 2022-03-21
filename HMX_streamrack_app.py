@@ -24,6 +24,8 @@ Window.size = (1280, 300)
 
 stream_name = "Untitled-Stream"
 encoder = "-y -format_code Hi59 -f decklink -i 'DeckLink SDI 4K'"
+#encoder = "-f video4linux2 -framerate 30 -video_size hd1080 -i /dev/video0 -f alsa -ac 2 -i hw:1 "
+#record_path = "/home/tyler/"
 record_path = "/home/hpstream/Desktop/StreamArchive/"
 x = 0
 p = 0
@@ -39,7 +41,7 @@ class MyLayout(GridLayout):
         self.z = 40
 
         self.startGrid = GridLayout()
-        self.startGrid.cols = 4
+        self.startGrid.cols = 3
         self.startGrid.padding = 4
         self.startGrid.spacing = 2
         self.startGrid.size_hint_y = .2
@@ -56,9 +58,20 @@ class MyLayout(GridLayout):
         self.startGrid.add_widget(self.StopButton)
         self.StopButton.bind(on_press=self.Stop)
 
-        self.PreviewButton = Button(text='Video in Preview', background_color='gray', background_normal= '', size_hint_x=0.33, size_hint_y=0.1)
-        self.startGrid.add_widget(self.PreviewButton)
+        self.PrevGrid = GridLayout()
+        self.PrevGrid.cols = 2
+        self.PrevGrid.padding = 4
+        self.PrevGrid.spacing = 2
+        self.PrevGrid.size_hint_y = .2
+        self.add_widget(self.PrevGrid)
+
+        self.PreviewButton = Button(text='Preview Video', background_color='blue', size_hint_x=0.33, size_hint_y=0.1)
+        self.PrevGrid.add_widget(self.PreviewButton)
         self.PreviewButton.bind(on_press=self.Preview)
+
+        self.PreviewAudioButton = Button(text='Audio Meter', background_color='yellow', size_hint_x=0.33, size_hint_y=0.1)
+        self.PrevGrid.add_widget(self.PreviewAudioButton)
+        self.PreviewAudioButton.bind(on_press=self.Preview_audio)
 
         self.rtmpGrid = GridLayout()
         self.rtmpGrid.cols = 2
@@ -154,8 +167,14 @@ class MyLayout(GridLayout):
 
 
     def Preview(self, instance):
-        video = f"ffmpeg {encoder}-f opengl 'Video in Preview'"
+        #video = f"ffmpeg -f video4linux2 -framerate 30 -video_size hd1080 -i /dev/video0 -pix_fmt yuv420p -f opengl 'Video in Preview'"
+        video = f'ffmpeg {encoder}'
         v = subprocess.Popen("exec " + video, stdout=subprocess.PIPE, shell=True)
+
+    def Preview_audio(self, instance):
+        #audio = f"ffmpeg -f alsa -i hw:1 -filter_complex showvolume -f opengl 'audio meter'"
+        audio = f'ffmpeg {encoder}'
+        a = subprocess.Popen("exec " + audio, stdout=subprocess.PIPE, shell=True)
 
 
 class MyApp(App):
