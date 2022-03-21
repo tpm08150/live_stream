@@ -22,8 +22,11 @@ import time
 
 Window.size = (1280, 300)
 
+
 stream_name = "Untitled-Stream"
 encoder = "-y -format_code Hi59 -f decklink -i 'DeckLink SDI 4K'"
+format_code = "Hi59"
+path = "DeckLink SDI 4K"
 #encoder = "-f video4linux2 -framerate 30 -video_size hd1080 -i /dev/video0 -f alsa -ac 2 -i hw:1 "
 #record_path = "/home/tyler/"
 record_path = "/home/hpstream/Desktop/StreamArchive/"
@@ -65,13 +68,39 @@ class MyLayout(GridLayout):
         self.PrevGrid.size_hint_y = .2
         self.add_widget(self.PrevGrid)
 
-        self.PreviewButton = Button(text='Preview Video', background_color='blue', size_hint_x=0.33, size_hint_y=0.1)
+        self.PreviewButton = Button(text='Preview Video', background_color='purple', size_hint_x=0.33, size_hint_y=0.1)
         self.PrevGrid.add_widget(self.PreviewButton)
         self.PreviewButton.bind(on_press=self.Preview)
 
         self.PreviewAudioButton = Button(text='Audio Meter', background_color='yellow', size_hint_x=0.33, size_hint_y=0.1)
         self.PrevGrid.add_widget(self.PreviewAudioButton)
         self.PreviewAudioButton.bind(on_press=self.Preview_audio)
+
+        self.ResGrid = GridLayout()
+        self.ResGrid.cols = 5
+        self.ResGrid.padding = 4
+        self.ResGrid.spacing = 2
+        self.ResGrid.size_hint_y = .2
+        self.add_widget(self.ResGrid)
+
+        self.inputLabel = Label(text="Decklink Input Resolution", size_hint_x=.25)
+        self.ResGrid.add_widget(self.inputLabel)
+
+        self.Hi59Button = Button(text='1080i 59.94', background_color='blue', size_hint_x=0.15, size_hint_y=0.1)
+        self.ResGrid.add_widget(self.Hi59Button)
+        self.Hi59Button.bind(on_press=self.Hi59)
+
+        self.Hi60Button = Button(text='1080i 60', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
+        self.ResGrid.add_widget(self.Hi60Button)
+        self.Hi60Button.bind(on_press=self.Hi60)
+
+        self.Hp59Button = Button(text='1080p 59.94', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
+        self.ResGrid.add_widget(self.Hp59Button)
+        self.Hp59Button.bind(on_press=self.Hp59)
+
+        self.Hp60Button = Button(text='1080p 60', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
+        self.ResGrid.add_widget(self.Hp60Button)
+        self.Hp60Button.bind(on_press=self.Hp60)
 
         self.rtmpGrid = GridLayout()
         self.rtmpGrid.cols = 2
@@ -130,25 +159,25 @@ class MyLayout(GridLayout):
             pass
 
         if self.rtmp1.text != "" and self.rtmp2.text == "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg -y -format_code {format_code} -f decklink -i "{path}"  -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text == "" and self.rtmp4.text == "":
-            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg -y -format_code {format_code} -f decklink -i "{path}" -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text == "":
-            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg -y -format_code {format_code} -f decklink -i "{path}" -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
             x = 1
         if self.rtmp1.text != "" and self.rtmp2.text != "" and self.rtmp3.text != "" and self.rtmp4.text != "":
-            stream = f'ffmpeg {encoder} -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
+            stream = f'ffmpeg -y -format_code {format_code} -f decklink -i "{path}" -map 0 -flags +global_header -c:v libx264 -crf 20.0 -crf_max 25.0 -profile high444 -preset ultrafast -trellis 2 ' \
                      f'-maxrate 2600k -bufsize 5200k -pix_fmt yuv420p -g 50 -c:a aac -b:a 160k -ac 2 -ar 44100 ' \
                      f'-f tee "[f=flv]{self.rtmp1.text}/{self.key1.text}|[f=flv]{self.rtmp2.text}/{self.key2.text}|[f=flv]{self.rtmp3.text}/{self.key3.text}|[f=flv]{self.rtmp4.text}/{self.key4.text}|[f=flv]{record_path}{stream_name}{i}.mp4"'
             print(stream)
@@ -176,6 +205,34 @@ class MyLayout(GridLayout):
         audio = f"ffmpeg -y -format_code {format_code} -f decklink -i '{path}' -filter_complex showvolume -f opengl 'audio meter'"
         a = subprocess.Popen("exec " + audio, stdout=subprocess.PIPE, shell=True)
 
+    def Hi59(self, instance):
+        global format_code
+        format_code = "Hi59"
+        self.Hi59Button.background_color = 'blue'
+        self.Hi60Button.background_color = 'gray'
+        self.Hp59Button.background_color = 'gray'
+        self.Hp60Button.background_color = 'gray'
+    def Hi60(self, instance):
+        global format_code
+        format_code = "hi60"
+        self.Hi59Button.background_color = 'gray'
+        self.Hi60Button.background_color = 'blue'
+        self.Hp59Button.background_color = 'gray'
+        self.Hp60Button.background_color = 'gray'
+    def Hp59(self, instance):
+        global format_code
+        format_code = "Hp59"
+        self.Hi59Button.background_color = 'gray'
+        self.Hi60Button.background_color = 'gray'
+        self.Hp59Button.background_color = 'blue'
+        self.Hp60Button.background_color = 'gray'
+    def Hp60(self, instance):
+        global format_code
+        format_code = "Hp60"
+        self.Hi59Button.background_color = 'gray'
+        self.Hi60Button.background_color = 'gray'
+        self.Hp59Button.background_color = 'gray'
+        self.Hp60Button.background_color = 'blue'
 
 class MyApp(App):
     def build(self):
