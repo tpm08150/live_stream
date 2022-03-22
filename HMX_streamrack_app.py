@@ -94,11 +94,11 @@ class MyLayout(GridLayout):
         self.ResGrid.add_widget(self.Hi60Button)
         self.Hi60Button.bind(on_press=self.Hi60)
 
-        self.Hp59Button = Button(text='1080p 59.94', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
+        self.Hp59Button = Button(text='1080p 29.97', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
         self.ResGrid.add_widget(self.Hp59Button)
         self.Hp59Button.bind(on_press=self.Hp59)
 
-        self.Hp60Button = Button(text='1080p 60', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
+        self.Hp60Button = Button(text='1080p 30', background_color='gray', size_hint_x=0.15, size_hint_y=0.1)
         self.ResGrid.add_widget(self.Hp60Button)
         self.Hp60Button.bind(on_press=self.Hp60)
 
@@ -224,14 +224,14 @@ class MyLayout(GridLayout):
         self.Hp60Button.background_color = 'gray'
     def Hp59(self, instance):
         global format_code
-        format_code = "Hp59"
+        format_code = "Hp29"
         self.Hi59Button.background_color = 'gray'
         self.Hi60Button.background_color = 'gray'
         self.Hp59Button.background_color = 'blue'
         self.Hp60Button.background_color = 'gray'
     def Hp60(self, instance):
         global format_code
-        format_code = "Hp60"
+        format_code = "Hp30"
         self.Hi59Button.background_color = 'gray'
         self.Hi60Button.background_color = 'gray'
         self.Hp59Button.background_color = 'gray'
