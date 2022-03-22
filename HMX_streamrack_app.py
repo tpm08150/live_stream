@@ -239,6 +239,7 @@ class MyLayout(GridLayout):
 
 class MyApp(App):
     def build(self):
+        self.title = 'HMX Streaming App'
         return MyLayout()
 
 
