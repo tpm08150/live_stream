@@ -214,7 +214,7 @@ class MyLayout(GridLayout):
         self.Hp60Button.background_color = 'gray'
     def Hi60(self, instance):
         global format_code
-        format_code = "hi60"
+        format_code = "Hi60"
         self.Hi59Button.background_color = 'gray'
         self.Hi60Button.background_color = 'blue'
         self.Hp59Button.background_color = 'gray'
