@@ -135,6 +135,7 @@ class MyLayout(GridLayout):
 
 
     def Start(self, instance):
+        global format_code
         global stream
         global x
         global p
@@ -196,11 +197,13 @@ class MyLayout(GridLayout):
 
 
     def Preview(self, instance):
+        global format_code
         #video = f"ffmpeg -f video4linux2 -framerate 30 -video_size hd1080 -i /dev/video0 -pix_fmt yuv420p -f opengl 'Video in Preview'"
         video = f"ffmpeg -y -format_code {format_code} -f decklink -i '{path}' -pix_fmt yuv420p -f opengl 'Video Preview'"
         v = subprocess.Popen("exec " + video, stdout=subprocess.PIPE, shell=True)
 
     def Preview_audio(self, instance):
+        global format_code
         #audio = f"ffmpeg -f alsa -i hw:1 -filter_complex showvolume -f opengl 'audio meter'"
         audio = f"ffmpeg -y -format_code {format_code} -f decklink -i '{path}' -filter_complex showvolume -f opengl 'audio meter'"
         a = subprocess.Popen("exec " + audio, stdout=subprocess.PIPE, shell=True)
